@@ -115,16 +115,14 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       infoController.toggleListeners();
     };
 
-    var toggleSaveState = document.createElement("a");
-    toggleSaveState.setAttribute(
+    var resetDisplay = document.createElement("a");
+    resetDisplay.setAttribute(
       "class",
       buttonClass + " download-state ui-icon-action"
     );
-    toggleSaveState.onclick = function () {
-      var blob = new Blob([app.getState()], { type: "application/json" });
-      toggleSaveState.href = window.URL.createObjectURL(blob);
+    resetDisplay.onclick = function () {
+      app.resetDisplay();
     };
-    toggleSaveState.download = "state.json";
 
     var tags = document.createElement("a");
     tags.href = "#tags_page";
@@ -139,7 +137,7 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
     node.appendChild(undo);
     node.appendChild(redo);
     // node.appendChild(toggleInfo);
-    // node.appendChild(toggleSaveState);
+    node.appendChild(resetDisplay);
     // node.appendChild(tags);
     // node.appendChild(drawList);
     dwvjq.gui.refreshElement(node);
