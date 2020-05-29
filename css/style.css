@@ -42,6 +42,12 @@ body {
   pointer-events: none;
 }
 
+.result {
+  position: relative;
+  padding: 0;
+  text-align: center;
+}
+
 .dropBox {
 }
 .dropBoxBorder {

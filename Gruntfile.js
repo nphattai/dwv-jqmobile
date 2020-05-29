@@ -32,14 +32,14 @@ module.exports = function (grunt) {
     connect: {
       prod: {
         options: {
-          port: 8081,
+          port: 3000,
           hostname: "localhost",
           livereload: true,
         },
       },
       dev: {
         options: {
-          port: 8081,
+          port: 3000,
           hostname: "localhost",
           livereload: true,
           base: {

@@ -114,15 +114,36 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       dwvjq.html.toggleDisplay(infoLayer);
       infoController.toggleListeners();
     };
-
-    var resetDisplay = document.createElement("a");
-    resetDisplay.setAttribute(
+    var toggleSaveState = document.createElement("a");
+    toggleSaveState.setAttribute(
       "class",
       buttonClass + " download-state ui-icon-action"
     );
-    resetDisplay.onclick = function () {
-      app.resetDisplay();
+    var co = document.getElementById("co");
+    var cf = document.getElementById("cf");
+    toggleSaveState.onclick = function () {
+      console.log({
+        state: JSON.parse(app.getState()).drawings.children[0].children[0]
+          .children[0].attrs.points,
+      });
+      var data = JSON.parse(app.getState()).drawings.children[0].children[0]
+        .children[0].attrs.points;
+      let newData = [];
+      for (let i = 0; i < data.length; i += 2) {
+        newData.push([data[i], data[i + 1]]);
+      }
+      console.log(newData);
+      let area = Area(newData);
+      let perimeter = Perimeter(newData);
+      var Co = (perimeter * perimeter) / area;
+      var Cf = 1 - (4 * Math.PI * area) / (perimeter * perimeter);
+      console.log({ area, perimeter, Co, Cf });
+      co.innerHTML = "Co: " + Co.toString();
+      cf.innerHTML = "Cf: " + Cf.toString();
+      // var blob = new Blob([app.getState()], { type: "application/json" });
+      // toggleSaveState.href = window.URL.createObjectURL(blob);
     };
+    // toggleSaveState.download = "state.json";
 
     var tags = document.createElement("a");
     tags.href = "#tags_page";
@@ -136,10 +157,10 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
     node.appendChild(open);
     node.appendChild(undo);
     node.appendChild(redo);
-    // node.appendChild(toggleInfo);
-    node.appendChild(resetDisplay);
-    // node.appendChild(tags);
-    // node.appendChild(drawList);
+    node.appendChild(toggleInfo);
+    node.appendChild(toggleSaveState);
+    node.appendChild(tags);
+    node.appendChild(drawList);
     dwvjq.gui.refreshElement(node);
   };
 
@@ -150,3 +171,30 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
     base.initialise();
   };
 };
+
+function Area(corners) {
+  const length = corners.length;
+  let area = 0;
+  for (let i = 0; i < length; i++) {
+    let j = (i + 1) % length;
+    area += corners[i][0] * corners[j][1];
+    area -= corners[j][0] * corners[i][1];
+  }
+  return Math.abs(area) / 2;
+}
+
+function Distance(p1, p2) {
+  return Math.sqrt(
+    (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
+  );
+}
+
+function Perimeter(corners) {
+  let perimeter = 0;
+  firstPoint = corners[0];
+  corners.push(firstPoint);
+  for (let i = 0; i < corners.length - 1; i++) {
+    perimeter += Distance(corners[i], corners[i + 1]);
+  }
+  return perimeter;
+}
