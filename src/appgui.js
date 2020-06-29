@@ -121,6 +121,7 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
     );
     var co = document.getElementById("co");
     var cf = document.getElementById("cf");
+    var fr = document.getElementById("fr");
     toggleSaveState.onclick = function () {
       console.log({
         state: JSON.parse(app.getState()).drawings.children[0].children[0]
@@ -138,6 +139,17 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       var Co = (perimeter * perimeter) / area;
       var Cf = 1 - (4 * Math.PI * area) / (perimeter * perimeter);
       console.log({ area, perimeter, Co, Cf });
+      $.ajax({
+        type: "POST",
+        url: "http://127.0.0.1:5000/",
+        contentType: "application/json",
+        data: JSON.stringify({ data: newData }),
+        success: (data) => {
+          console.log(data);
+          fr.innerHTML = "FR: " + data["FR"].toString();
+        },
+        dataType: "json",
+      });
       co.innerHTML = "Co: " + Co.toString();
       cf.innerHTML = "Cf: " + Cf.toString();
       // var blob = new Blob([app.getState()], { type: "application/json" });
