@@ -122,6 +122,7 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
     var co = document.getElementById("co");
     var cf = document.getElementById("cf");
     var fr = document.getElementById("fr");
+    var ans = document.getElementById("ans");
     toggleSaveState.onclick = function () {
       console.log({
         state: JSON.parse(app.getState()).drawings.children[0].children[0]
@@ -136,8 +137,8 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       console.log(newData);
       let area = Area(newData);
       let perimeter = Perimeter(newData);
-      var Co = (perimeter * perimeter) / area;
-      var Cf = 1 - (4 * Math.PI * area) / (perimeter * perimeter);
+      var Co = parseFloat((perimeter * perimeter) / area);
+      var Cf = parseFloat(1 - (4 * Math.PI * area) / (perimeter * perimeter));
       console.log({ area, perimeter, Co, Cf });
       $.ajax({
         type: "POST",
@@ -145,13 +146,21 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
         contentType: "application/json",
         data: JSON.stringify({ data: newData }),
         success: (data) => {
-          console.log(data);
-          fr.innerHTML = "FR: " + data["FR"].toString();
+          FR = parseFloat(data["FR"]);
+          console.log(FR);
+          fr.innerHTML = "FR: " + FR.toFixed(2);
         },
         dataType: "json",
       });
-      co.innerHTML = "Co: " + Co.toString();
-      cf.innerHTML = "Cf: " + Cf.toString();
+      var result = "";
+      if (Co > 73 && Cf > 0.83 && FR > 1.03) {
+        result = "Melanoma tumors";
+      } else {
+        result = "Benign tumors";
+      }
+      co.innerHTML = "Co: " + Co.toFixed(2);
+      cf.innerHTML = "Cf: " + Cf.toFixed(2);
+      ans.innerHTML = "Result: " + result;
       // var blob = new Blob([app.getState()], { type: "application/json" });
       // toggleSaveState.href = window.URL.createObjectURL(blob);
     };
